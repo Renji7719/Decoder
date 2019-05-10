@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ja">
+	<head>
+		<meta charset="UTF-8">
+		<title>Decoder</title>
+		<script>
+			function ChangeAsciiToPlain() {
+			//最終的に出力するデコードされたテキストを格納する変数の初期化
+			var decodeText = "";
+			//テキストエリアとラジオボタンの値を変数に格納
+			var encodeText = document.getElementById( "encodeTextarea" ).value ;
+			var booleanDecimal = document.getElementById( "decimalRadio" ) ;
+			var booleanHex = document.getElementById( "hexRadio" ) ;
+			var booleanBase64 = document.getElementById( "base64Radio" ) ;
+			var booleanURLencode = document.getElementById( "URLencodeRadio" ) ;
+			//一つ前と今回のエンコードテキストを保持（二重デコード用に使う）
+			var beforeEncodeText = document.getElementById("doubleDecodeTextarea").value;
+			var nowEncodeText = encodeText;
+			
+			
+			
+			
+			
+			
+			//ラジオボタンで何が選択されたかで処理の分岐
+			if ( booleanDecimal.checked ) {
+				//区切り文字が半角スペースでも”,”でも対応できるようにしてる
+				//chr(x)+chr(y)の形式でも変換可能
+				encodeText = encodeText.replace(/chr\(/g,'');
+				encodeText = encodeText.replace( /\)/g ,'');
+				encodeText = encodeText.replace(/\+/g,' ');
+				encodeText = encodeText.replace(/,/g,' ');
+				console.log(encodeText)
+			
+				//エンコードされた文字列を格納するための配列
+				var encodeTextArray = encodeText.split(' ');
+			
+				//エンコードされた文字列を1文字ずつASCIIから平文にデコード
+				encodeTextArray.forEach(function( value ) {
+					decodeText = decodeText + String.fromCharCode(value);
+				});
+				console.log(encodeTextArray)
+			} else if (booleanHex.checked ) {
+				//先頭の0xを消してる
+				encodeText = encodeText.replace(/0x/g,"")
+				//2文字ずつ分割して配列に格納（16進数は2桁だから）
+				var encodeTextArray = encodeText.match(/.{2}/g);
+				for (var i = 0; i < encodeTextArray.length; i++) {
+					decodeText = decodeText + String.fromCharCode(parseInt(encodeTextArray[i],16));
+				}
+				console.log(encodeTextArray)
+			} else if (booleanBase64.checked){
+				decodeText = window.atob(encodeText);
+			} else if (booleanURLencode.checked){
+				decodeText = decodeURI(encodeText)
+			}
+			
+			document.getElementById( "decodeTextarea" ).value = decodeText ;
+			
+			//二重デコード用のところに、今回デコードしたい文字列が含まれていたら、デコード結果をリプレイス。含まれていなかったら、デコード結果を貼り付ける。
+			if ( beforeEncodeText.indexOf(nowEncodeText) != -1) {
+				document.getElementById( "doubleDecodeTextarea" ).value = beforeEncodeText.replace(nowEncodeText,decodeText) ;
+			
+			} else {
+				document.getElementById( "doubleDecodeTextarea" ).value = decodeText ;
+			
+			}
+			
+			
+			
+			}
+		</script>
+	</head>
+	<body>
+		<form>
+			<h1> Decoder</h1>
+			<p>
+				デコード形式を選択してね。ASCIIの10進数は、半角スペース区切りかカンマ区切り、もしくはchr(x)+chr(y)の形式(PHPやpythonで使われる)でもデコードできるよ。<br>
+				16進数は"0x"付いてても付いてなくてもデコードできるけど、半角スペースとかには対応してない。（例：6578616d706c65）
+			</p>
+			<input type="radio" name="group1" value="base64" id = "base64Radio" checked>base64
+			<input type="radio" name="group1" value="URLencode" id = "URLencodeRadio">URLエンコード
+			<input type="radio" name="group1" value="decimal" id = "decimalRadio">ASCII(decimal)
+			<input type="radio" name="group1" value="hexRadio" id = "hexRadio">ASCII(hex)<br>
+			<br>
+			<textarea rows="15" cols="80" placeholder="エンコードされた文字を入力してください" id = "encodeTextarea"></textarea>
+			<textarea rows="15" cols="80" placeholder="デコード結果" id = "decodeTextarea"></textarea>
+			
+			<p>
+				<input type="button" value="れっつでこーど" value=decodeButton onclick="ChangeAsciiToPlain()" style="font-size:1.4em;background-color:#248;font-weight:bold;padding:10px30px;color:#fff;">
+			</p>
+			多重デコード用テキストエリア(自動で更新されるよ。デコード形式をミスした場合は最初からやり直してね)<br>
+			<textarea rows="25" cols="160" placeholder="多重デコード用" id = "doubleDecodeTextarea"></textarea>
+		</form>
+		
+	</body>
+</html>
