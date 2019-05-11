@@ -7,7 +7,7 @@
 ・base64  
 &nbsp;&nbsp;&nbsp;&nbsp;末尾のイコール無しでもデコード可能です。  
 ・URLエンコード  
-&nbsp;&nbsp;&nbsp;&nbsp;一部にパーセントエンコードを含んだ文字列でもデコードできます。  
+&nbsp;&nbsp;&nbsp;&nbsp;一部にURLエンコードされた文字列を含んだ文字列でもデコードできます。（例:test=%e3%83%86%e3%82%b9%e3%83%88）   
 ・ASCII（10進数）  
 &nbsp;&nbsp;&nbsp;&nbsp;10進数で表記されたASCII文字をデコードできます。区切り文字は、半角スペースかカンマ、もしくはもしくはchr(x)+chr(y)の形式(PHPやpythonで使われる)で末尾表記して使用してください。  
 ・ASCII（16進数）  
