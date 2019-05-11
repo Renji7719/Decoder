@@ -5,71 +5,90 @@
 		<title>Decoder</title>
 		<script>
 			function ChangeAsciiToPlain() {
-			//最終的に出力するデコードされたテキストを格納する変数の初期化
-			var decodeText = "";
-			//テキストエリアとラジオボタンの値を変数に格納
-			var encodeText = document.getElementById( "encodeTextarea" ).value ;
-			var booleanDecimal = document.getElementById( "decimalRadio" ) ;
-			var booleanHex = document.getElementById( "hexRadio" ) ;
-			var booleanBase64 = document.getElementById( "base64Radio" ) ;
-			var booleanURLencode = document.getElementById( "URLencodeRadio" ) ;
-			//一つ前と今回のエンコードテキストを保持（二重デコード用に使う）
-			var beforeEncodeText = document.getElementById("doubleDecodeTextarea").value;
-			var nowEncodeText = encodeText;
-			
-			
-			console.log(beforeEncodeText)
-			
-			
-			
-			//ラジオボタンで何が選択されたかで処理の分岐
-			if ( booleanDecimal.checked ) {
-				//区切り文字が半角スペースでも”,”でも対応できるようにしてる
-				//chr(x)+chr(y)の形式でも変換可能
-				encodeText = encodeText.replace(/chr\(/g,'');
-				encodeText = encodeText.replace( /\)/g ,'');
-				encodeText = encodeText.replace(/\+/g,' ');
-				encodeText = encodeText.replace(/,/g,' ');
-			
-				//エンコードされた文字列を格納するための配列
-				var encodeTextArray = encodeText.split(' ');
-			
-				//エンコードされた文字列を1文字ずつASCIIから平文にデコード
-				encodeTextArray.forEach(function( value ) {
-					decodeText = decodeText + String.fromCharCode(value);
-				});
-				console.log(encodeTextArray)
-			} else if (booleanHex.checked ) {
-				//先頭の0xを消してる
-				encodeText = encodeText.replace(/0x/g,"")
-				//2文字ずつ分割して配列に格納（16進数は2桁だから）
-				var encodeTextArray = encodeText.match(/.{2}/g);
-				for (var i = 0; i < encodeTextArray.length; i++) {
-					decodeText = decodeText + String.fromCharCode(parseInt(encodeTextArray[i],16));
+				//最終的に出力するデコードされたテキストを格納する変数の初期化
+				var decodeText = "";
+				//テキストエリアとラジオボタンの値を変数に格納
+				var encodeText = document.getElementById( "encodeTextarea" ).value ;
+				var booleanDecimal = document.getElementById( "decimalRadio" ) ;
+				var booleanHex = document.getElementById( "hexRadio" ) ;
+				var booleanBase64 = document.getElementById( "base64Radio" ) ;
+				var booleanURLencode = document.getElementById( "URLencodeRadio" ) ;
+				//一つ前と今回のエンコードテキストを保持（二重デコード用に使う）
+				var beforeEncodeText = document.getElementById("doubleDecodeTextarea").value;
+				var nowEncodeText = encodeText;
+
+
+
+
+
+				try{
+				//ラジオボタンで何が選択されたかで処理の分岐
+				if ( booleanDecimal.checked ) {
+					//区切り文字が半角スペースでも”,”でも対応できるようにしてる
+					//chr(x)+chr(y)の形式でも変換可能
+					encodeText = encodeText.replace(/chr\(/g,'');
+					encodeText = encodeText.replace( /\)/g ,'');
+					encodeText = encodeText.replace(/\+/g,' ');
+					encodeText = encodeText.replace(/,/g,' ');
+					console.log(encodeText)
+
+					//エンコードされた文字列を格納するための配列
+					var encodeTextArray = encodeText.split(' ');
+
+					//エンコードされた文字列を1文字ずつASCIIから平文にデコード
+					encodeTextArray.forEach(function( value ) {
+						decodeText = decodeText + String.fromCharCode(value);
+					});
+					console.log(encodeTextArray)
+				} else if (booleanHex.checked ) {
+					//先頭の0xを消してる
+					encodeText = encodeText.replace(/0x/g,"")
+					//2文字ずつ分割して配列に格納（16進数は2桁だから）
+					var encodeTextArray = encodeText.match(/.{2}/g);
+					for (var i = 0; i < encodeTextArray.length; i++) {
+						decodeText = decodeText + String.fromCharCode(parseInt(encodeTextArray[i],16));
+					}
+					console.log(encodeTextArray)
+				} else if (booleanBase64.checked){
+					decodeText = window.atob(encodeText);
+				} else if (booleanURLencode.checked){
+					if (encodeText.match(/%[0-9A-Fa-f][0-9A-Fa-f]/g)){
+						//パーセントエンコードされた文字列だけを抽出(これ配列になっちゃうみたい)
+						var pEncodeTextArray = encodeText.match(/%[0-9A-Fa-f][0-9A-Fa-f]/g);
+						var pEncodeText = "";
+						var pDecodeText = "" ;
+						decodeText = encodeText ;
+						for (var i = 0; i < pEncodeTextArray.length; i++) {
+							var tempPDecodeText = "" ;
+							tempPDecodeText = decodeURIComponent(pEncodeTextArray[i]);
+							console.log(tempPDecodeText);
+							console.log(i);
+							decodeText = decodeText.replace(pEncodeTextArray[i],tempPDecodeText) ;
+
+						}
+
+					}else {
+						decodeText = "パーセントエンコードされた文字列は存在しないよ。"
+					}
 				}
-				console.log(encodeTextArray)
-			} else if (booleanBase64.checked){
-				decodeText = window.atob(encodeText);
-			} else if (booleanURLencode.checked){
-				decodeText = decodeURI(encodeText)
-			}
-			
-			document.getElementById( "decodeTextarea" ).value = decodeText ;
-			
-			//二重デコード用のところに、今回デコードしたい文字列が含まれていたら、デコード結果をリプレイス
-			if ( beforeEncodeText.indexOf(nowEncodeText) != -1) {
-				document.getElementById( "doubleDecodeTextarea" ).value = beforeEncodeText.replace(nowEncodeText,decodeText) ;
-			
-			} else {
-				document.getElementById( "doubleDecodeTextarea" ).value = decodeText ;
-			
-			}
-			
-			
-			
-			
-			
-			
+
+				document.getElementById( "decodeTextarea" ).value = decodeText ;
+
+				//二重デコード用のところに、今回デコードしたい文字列が含まれていたら、デコード結果をリプレイス。含まれていなかったら、デコード結果を貼り付ける。
+				if ( beforeEncodeText.indexOf(nowEncodeText) != -1) {
+					document.getElementById( "doubleDecodeTextarea" ).value = beforeEncodeText.replace(nowEncodeText,decodeText) ;
+
+				} else {
+					document.getElementById( "doubleDecodeTextarea" ).value = decodeText ;
+
+				}
+
+				} catch(error){
+					document.getElementById( "doubleDecodeTextarea" ).value = error ;
+
+				}
+
+
 			
 			}
 		</script>
