@@ -53,19 +53,26 @@
 					decodeText = window.atob(encodeText);
 				} else if (booleanURLencode.checked){
 					if (encodeText.match(/%[0-9A-Fa-f][0-9A-Fa-f]/g)){
-						//パーセントエンコードされた文字列だけを抽出(これ配列になっちゃうみたい)
-						var pEncodeTextArray = encodeText.match(/%[0-9A-Fa-f][0-9A-Fa-f]/g);
-						var pEncodeText = "";
-						var pDecodeText = "" ;
-						decodeText = encodeText ;
-						for (var i = 0; i < pEncodeTextArray.length; i++) {
-							var tempPDecodeText = "" ;
+					//パーセントエンコードされた文字列だけを抽出(これ配列になっちゃうみたい)
+					var pEncodeTextArray = encodeText.match(/%[0-9A-Fa-f][0-9A-Fa-f]/g);
+					var pEncodeText = "";
+					var pDecodeText = "" ;
+					decodeText = encodeText ;
+					for (var i = 0; i < pEncodeTextArray.length; i++) {
+						var tempPDecodeText = "" ;
+						//日本語のURLエンコードにも対応するために、エラーが出たら3文字ずつ処理してる。
+						try{
 							tempPDecodeText = decodeURIComponent(pEncodeTextArray[i]);
-							console.log(tempPDecodeText);
-							console.log(i);
 							decodeText = decodeText.replace(pEncodeTextArray[i],tempPDecodeText) ;
-
+						}catch (e){
+							tempPDecodeText = decodeURIComponent(pEncodeTextArray[i]+pEncodeTextArray[i+1]+pEncodeTextArray[i+2]);
+							decodeText = decodeText.replace(pEncodeTextArray[i]+pEncodeTextArray[i+1]+pEncodeTextArray[i+2],tempPDecodeText) ;
+							i=i+2;
 						}
+						
+						
+					}
+
 
 					}else {
 						decodeText = "パーセントエンコードされた文字列は存在しないよ。"
@@ -100,7 +107,7 @@
 			<p>
 				デコード形式を選択してね。ASCIIの10進数は、半角スペース区切りかカンマ区切り、もしくはchr(x)+chr(y)の形式(PHPやpythonで使われる)でもデコードできるよ。<br>
 				16進数は"0x"付いてても付いてなくてもデコードできるけど、半角スペースとかには対応してない。（例：6578616d706c65）<br>
-				URLエンコードは、マルチバイト文字（日本語）には対応してないっす。一部にURLエンコードされた文字列を含んだ文字列でもデコードできるよ。（例:test=%74%65%73%74）
+				URLエンコードは、一部にURLエンコードされた文字列を含んだ文字列でもデコードできるよ。（例:test=%74%65%73%74）
 			</p>
 			<input type="radio" name="group1" value="base64" id = "base64Radio" checked>base64
 			<input type="radio" name="group1" value="URLencode" id = "URLencodeRadio">URLエンコード
