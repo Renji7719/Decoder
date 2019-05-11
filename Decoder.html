@@ -21,7 +21,7 @@
 			
 			
 			
-			
+			try{
 			//ラジオボタンで何が選択されたかで処理の分岐
 			if ( booleanDecimal.checked ) {
 				//区切り文字が半角スペースでも”,”でも対応できるようにしてる
@@ -52,7 +52,24 @@
 			} else if (booleanBase64.checked){
 				decodeText = window.atob(encodeText);
 			} else if (booleanURLencode.checked){
-				decodeText = decodeURI(encodeText)
+				if (encodeText.match(/%[0-9A-Fa-f][0-9A-Fa-f]/g)){
+					//パーセントエンコードされた文字列だけを抽出(これ配列になっちゃうみたい)
+					var pEncodeTextArray = encodeText.match(/%[0-9A-Fa-f][0-9A-Fa-f]/g);
+					var pEncodeText = "";
+					var pDecodeText = "" ;
+					decodeText = encodeText ;
+					for (var i = 0; i < pEncodeTextArray.length; i++) {
+						var tempPDecodeText = "" ;
+						tempPDecodeText = decodeURIComponent(pEncodeTextArray[i]);
+						console.log(tempPDecodeText);
+						console.log(i);
+						decodeText = decodeText.replace(pEncodeTextArray[i],tempPDecodeText) ;
+						
+					}
+
+				}else {
+					decodeText = "パーセントエンコードされた文字列は存在しないよ。"
+				}
 			}
 			
 			document.getElementById( "decodeTextarea" ).value = decodeText ;
@@ -63,6 +80,11 @@
 			
 			} else {
 				document.getElementById( "doubleDecodeTextarea" ).value = decodeText ;
+			
+			}
+			
+			} catch(error){
+				document.getElementById( "doubleDecodeTextarea" ).value = error ;
 			
 			}
 			
