@@ -57,7 +57,7 @@
 					}
 					console.log(encodeTextArray)
 				} else if (booleanBase64.checked){
-					decodeText = window.atob(encodeText);
+					decodeText =  decodeURIComponent(escape(window.atob(encodeText))); 
 				} else if (booleanURLencode.checked){
 					if (encodeText.match(/%[0-9A-Fa-f][0-9A-Fa-f]/g)){
 					//パーセントエンコードされた文字列だけを抽出(これ配列になっちゃうみたい)
