@@ -29,6 +29,7 @@
 				encodeText = encodeText.replace(/chr\(/g,'');
 				encodeText = encodeText.replace( /\)/g ,'');
 				encodeText = encodeText.replace(/\+/g,' ');
+				encodeText = encodeText.replace(/\./g,' ');
 				encodeText = encodeText.replace(/,/g,' ');
 				console.log(encodeText)
 			
@@ -37,6 +38,8 @@
 			
 				//エンコードされた文字列を1文字ずつASCIIから平文にデコード
 				encodeTextArray.forEach(function( value ) {
+					//余分な空白を削除
+					value = value.replace(/ /g,'');
 					decodeText = decodeText + String.fromCharCode(value);
 				});
 				console.log(encodeTextArray)
@@ -104,7 +107,7 @@
 		<form>
 			<h1> Decoder</h1>
 			<p>
-				デコード形式を選択してね。ASCIIの10進数は、半角スペース区切りかカンマ区切り、もしくはchr(x)+chr(y)の形式(PHPやpythonで使われる)でもデコードできるよ。<br>
+				デコード形式を選択してね。ASCIIの10進数は、半角スペース区切りかカンマ区切り、もしくはchr(x)+chr(y)やchr(x).chr(y)の形式(PHPやpythonで使われる)でもデコードできるよ。<br>
 				16進数は"0x"付いてても付いてなくてもデコードできるけど、半角スペースとかには対応してない。（例：6578616d706c65）<br>
 				URLエンコードは、一部にURLエンコードされた文字列を含んだ文字列でもデコードできるよ。（例:test=%74%65%73%74）
 			</p>

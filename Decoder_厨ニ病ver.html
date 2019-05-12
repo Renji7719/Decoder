@@ -23,22 +23,25 @@
 
 				try{
 				//ラジオボタンで何が選択されたかで処理の分岐
-				if ( booleanDecimal.checked ) {
-					//区切り文字が半角スペースでも”,”でも対応できるようにしてる
-					//chr(x)+chr(y)の形式でも変換可能
-					encodeText = encodeText.replace(/chr\(/g,'');
-					encodeText = encodeText.replace( /\)/g ,'');
-					encodeText = encodeText.replace(/\+/g,' ');
-					encodeText = encodeText.replace(/,/g,' ');
-					console.log(encodeText)
-
-					//エンコードされた文字列を格納するための配列
-					var encodeTextArray = encodeText.split(' ');
-
-					//エンコードされた文字列を1文字ずつASCIIから平文にデコード
-					encodeTextArray.forEach(function( value ) {
+					if ( booleanDecimal.checked ) {
+						//区切り文字が半角スペースでも”,”でも対応できるようにしてる
+						//chr(x)+chr(y)の形式でも変換可能
+						encodeText = encodeText.replace(/chr\(/g,'');
+						encodeText = encodeText.replace( /\)/g ,'');
+						encodeText = encodeText.replace(/\+/g,' ');
+						encodeText = encodeText.replace(/\./g,' ');
+						encodeText = encodeText.replace(/,/g,' ');
+						console.log(encodeText)
+						
+						//エンコードされた文字列を格納するための配列
+						var encodeTextArray = encodeText.split(' ');
+						
+						//エンコードされた文字列を1文字ずつASCIIから平文にデコード
+						encodeTextArray.forEach(function( value ) {
+						//余分な空白を削除
+						value = value.replace(/ /g,'');
 						decodeText = decodeText + String.fromCharCode(value);
-					});
+						});
 					console.log(encodeTextArray)
 				} else if (booleanHex.checked ) {
 					//先頭の0xを消してる
@@ -105,7 +108,7 @@
 			<font color = "##00ff00"> 
 			<h1>Decoder</h1>
 			<p>
-				デコード形式を選択してね。ASCIIの10進数は、半角スペース区切りかカンマ区切り、もしくはchr(x)+chr(y)の形式(PHPやpythonで使われる)でもデコードできるよ。<br>
+				デコード形式を選択してね。ASCIIの10進数は、半角スペース区切りかカンマ区切り、もしくはchr(x)+chr(y)やchr(x).chr(y)の形式(PHPやpythonで使われる)でもデコードできるよ。<br>
 				16進数は"0x"付いてても付いてなくてもデコードできるけど、半角スペースとかには対応してない。（例：6578616d706c65）<br>
 				URLエンコードは、一部にURLエンコードされた文字列を含んだ文字列でもデコードできるよ。（例:test=%74%65%73%74）
 			</p>
