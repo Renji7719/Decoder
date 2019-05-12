@@ -9,7 +9,7 @@
 ・URLエンコード  
 &nbsp;&nbsp;&nbsp;&nbsp;一部にURLエンコードされた文字列を含んだ文字列でもデコードできます。（例:test=%74%65%73%74　→　test=test）   
 ・ASCII（10進数）  
-&nbsp;&nbsp;&nbsp;&nbsp;10進数で表記されたASCII文字をデコードできます。区切り文字は、半角スペースかカンマ、もしくはもしくはchr(x)+chr(y)の形式(PHPやpythonで使われる)で末尾表記して使用してください。  
+&nbsp;&nbsp;&nbsp;&nbsp;10進数で表記されたASCII文字をデコードできます。区切り文字は、半角スペースかカンマ、もしくはもしくはchr(x)+chr(y)やchr(x).chr(y)の形式(PHPやpythonで使われる)で末尾表記して使用してください。  
 ・ASCII（16進数）  
 &nbsp;&nbsp;&nbsp;&nbsp;16進数は"0x"付いてても付いてなくてもデコードできますが、半角スペースなどには対応していません。区切り文字は使用しないでください。  
 &nbsp;&nbsp;&nbsp;&nbsp;（例：6578616d706c65）  
