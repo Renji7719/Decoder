@@ -26,6 +26,7 @@
 					if ( booleanDecimal.checked ) {
 						//区切り文字が半角スペースでも”,”でも対応できるようにしてる
 						//chr(x)+chr(y)の形式でも変換可能
+						encodeText = encodeText.replace(/\(/g,'');
 						encodeText = encodeText.replace(/CHAR\(/g,'');
 						encodeText = encodeText.replace(/char\(/g,'');
 						encodeText = encodeText.replace(/CHR\(/g,'');
