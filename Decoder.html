@@ -4,6 +4,41 @@
 		<meta charset="UTF-8">
 		<title>Decoder</title>
 		<script>
+			//base32をデコードする関数
+			function debase32(b){
+				let ans = "";
+				let nx = 0;
+				let nc = 0;
+				for(let i = 0; i < b.length; i++){
+					let c = b.charCodeAt(i);
+					let n = 0;
+					if(0x41 <= c && c <= 0x5a){         //A-Z
+						n = c - 0x41;
+					}else if(0x61 <= c && c <= 0x7a){   //a-z
+						n = c - 0x61;
+					}else if(0x32 <= c && c <= 0x37){   //2-7
+						n = c - 0x32 + 26;
+					}else if(c == 0x30){                //0
+						n = 14;
+					}else if(c == 0x31){                //1
+						n = 8;
+					}else{
+						continue;
+					}
+					n |= nx << 5;
+					nx = n & 0xff;
+					if(nc * 5 % 8 >= 3){
+						n >>= nc * 5 % 8 - 3;
+						ans += String.fromCharCode(n & 0xff);
+					}
+					nc++;
+					if(nc >= 8){
+						nc = 0;
+					}
+				}
+				return ans;
+			}
+
 			function ChangeAsciiToPlain() {
 			//最終的に出力するデコードされたテキストを格納する変数の初期化
 			var decodeText = "";
@@ -58,6 +93,8 @@
 				console.log(encodeTextArray)
 			} else if (booleanBase64.checked){
 				decodeText =  decodeURIComponent(escape(window.atob(encodeText))); 
+			} else if(booleanBase32.checked){
+					decodeText = debase32(encodeText);
 			} else if (booleanURLencode.checked){
 				if (encodeText.match(/%[0-9A-Fa-f][0-9A-Fa-f]/g)){
 					//パーセントエンコードされた文字列だけを抽出(これ配列になっちゃうみたい)
@@ -116,6 +153,7 @@
 				URLエンコードは、一部にURLエンコードされた文字列を含んだ文字列でもデコードできるよ。（例:test=%74%65%73%74）
 			</p>
 			<input type="radio" name="group1" value="base64" id = "base64Radio" checked>base64
+			<input type="radio" name="group1" value="base32" id = "base32Radio" >base32
 			<input type="radio" name="group1" value="URLencode" id = "URLencodeRadio">URLエンコード
 			<input type="radio" name="group1" value="decimal" id = "decimalRadio">ASCII(decimal)
 			<input type="radio" name="group1" value="hexRadio" id = "hexRadio">ASCII(hex)<br>
