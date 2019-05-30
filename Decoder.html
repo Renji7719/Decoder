@@ -80,7 +80,13 @@
 				encodeTextArray.forEach(function( value ) {
 					//余分な空白を削除
 					value = value.replace(/ /g,'');
-					decodeText = decodeText + String.fromCharCode(value);
+					//,と半角スペース両方使用されていた場合、エラー起きるから、配列に何も入ってなかったら何も処理しないって処理
+					if (value == ""){
+						
+					} else {
+						decodeText = decodeText + String.fromCharCode(value);
+					}
+					
 				});
 				console.log(encodeTextArray)
 			} else if (booleanHex.checked ) {
